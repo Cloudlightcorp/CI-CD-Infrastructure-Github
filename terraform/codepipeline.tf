@@ -1,13 +1,18 @@
 ############################################################
-# CODEPIPELINE USING SHARED S3 BUCKET
-# (Same bucket used for Terraform state + pipeline artifacts)
+# CODESTAR CONNECTION (GITHUB)
 ############################################################
+
+resource "aws_codestarconnections_connection" "github" {
+  name          = "github-onlinemobilestore-connection"
+  provider_type = "GitHub"
+}
 
 ############################################################
 # DEV PIPELINE
 ############################################################
+
 resource "aws_codepipeline" "dev_pipeline" {
-  name     = "CODECOMMIT-OnlineMobileStore-dev-ci_cd"
+  name     = "GIT-OnlineMobileStore-dev-ci_cd"
   role_arn = aws_iam_role.codepipeline_role.arn
 
   artifact_store {
@@ -22,14 +27,14 @@ resource "aws_codepipeline" "dev_pipeline" {
       name             = "Source"
       category         = "Source"
       owner            = "AWS"
-      provider         = "CodeCommit"
+      provider         = "CodeStarSourceConnection"
       version          = "1"
       output_artifacts = ["source_output"]
 
       configuration = {
-        RepositoryName = "ReactApp-ecs-cicd"
-        BranchName     = "dev"
-        PollForSourceChanges = "false"
+        ConnectionArn    = aws_codestarconnections_connection.github.arn
+        FullRepositoryId = "Cloudlightcorp/GIT-OnlineMobileStore-build-ci_cd"
+        BranchName       = "dev"
       }
     }
   }
@@ -75,8 +80,9 @@ resource "aws_codepipeline" "dev_pipeline" {
 ############################################################
 # TEST PIPELINE
 ############################################################
+
 resource "aws_codepipeline" "test_pipeline" {
-  name     = "reactapp-test-ci_cd"
+  name     = "GIT-OnlineMobileStore-test-ci_cd"
   role_arn = aws_iam_role.codepipeline_role.arn
 
   artifact_store {
@@ -91,14 +97,14 @@ resource "aws_codepipeline" "test_pipeline" {
       name             = "Source"
       category         = "Source"
       owner            = "AWS"
-      provider         = "CodeCommit"
+      provider         = "CodeStarSourceConnection"
       version          = "1"
       output_artifacts = ["source_output"]
 
       configuration = {
-        RepositoryName = "ReactApp-ecs-cicd"
-        BranchName     = "test"
-        PollForSourceChanges = "false"
+        ConnectionArn    = aws_codestarconnections_connection.github.arn
+        FullRepositoryId = "Cloudlightcorp/GIT-OnlineMobileStore-build-ci_cd"
+        BranchName       = "test"
       }
     }
   }
@@ -126,8 +132,9 @@ resource "aws_codepipeline" "test_pipeline" {
 ############################################################
 # PROD PIPELINE
 ############################################################
+
 resource "aws_codepipeline" "prod_pipeline" {
-  name     = "reactapp-prod-ci_cd"
+  name     = "GIT-OnlineMobileStore-prod-ci_cd"
   role_arn = aws_iam_role.codepipeline_role.arn
 
   artifact_store {
@@ -142,14 +149,14 @@ resource "aws_codepipeline" "prod_pipeline" {
       name             = "Source"
       category         = "Source"
       owner            = "AWS"
-      provider         = "CodeCommit"
+      provider         = "CodeStarSourceConnection"
       version          = "1"
       output_artifacts = ["source_output"]
 
       configuration = {
-        RepositoryName = "ReactApp-ecs-cicd"
-        BranchName     = "prod"
-        PollForSourceChanges = "false"
+        ConnectionArn    = aws_codestarconnections_connection.github.arn
+        FullRepositoryId = "Cloudlightcorp/GIT-OnlineMobileStore-build-ci_cd"
+        BranchName       = "prod"
       }
     }
   }
