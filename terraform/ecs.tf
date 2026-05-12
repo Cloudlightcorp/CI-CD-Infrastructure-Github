@@ -78,7 +78,6 @@ resource "aws_ecs_task_definition" "app" {
 
 resource "aws_ecs_service" "dev" {
   name            = "git-onlinemobilestore-dev-service"
-  force_new_deployment = true
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.app.arn
   launch_type     = "FARGATE"
@@ -99,7 +98,6 @@ resource "aws_ecs_service" "dev" {
 
 resource "aws_ecs_service" "test" {
   name            = "git-onlinemobilestore-test-service"
-  force_new_deployment = true
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.app.arn
   launch_type     = "FARGATE"
@@ -120,7 +118,6 @@ resource "aws_ecs_service" "test" {
 
 resource "aws_ecs_service" "prod" {
   name            = "git-onlinemobilestore-prod-service"
-  force_new_deployment = true
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.app.arn
   launch_type     = "FARGATE"
