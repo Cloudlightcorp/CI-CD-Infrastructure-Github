@@ -32,9 +32,11 @@ resource "aws_codepipeline" "dev_pipeline" {
       output_artifacts = ["source_output"]
 
       configuration = {
-        ConnectionArn    = aws_codestarconnections_connection.github.arn
-        FullRepositoryId = "Cloudlightcorp/GIT-OnlineMobileStore-build-ci_cd"
-        BranchName       = "dev"
+        ConnectionArn        = aws_codestarconnections_connection.github.arn
+        FullRepositoryId     = "Cloudlightcorp/GIT-OnlineMobileStore-build-ci_cd"
+        BranchName           = "dev"
+        DetectChanges        = "true"
+        OutputArtifactFormat = "CODE_ZIP"
       }
     }
   }
@@ -102,9 +104,11 @@ resource "aws_codepipeline" "test_pipeline" {
       output_artifacts = ["source_output"]
 
       configuration = {
-        ConnectionArn    = aws_codestarconnections_connection.github.arn
-        FullRepositoryId = "Cloudlightcorp/GIT-OnlineMobileStore-build-ci_cd"
-        BranchName       = "test"
+        ConnectionArn        = aws_codestarconnections_connection.github.arn
+        FullRepositoryId     = "Cloudlightcorp/GIT-OnlineMobileStore-build-ci_cd"
+        BranchName           = "test"
+        DetectChanges        = "true"
+        OutputArtifactFormat = "CODE_ZIP"
       }
     }
   }
@@ -154,9 +158,11 @@ resource "aws_codepipeline" "prod_pipeline" {
       output_artifacts = ["source_output"]
 
       configuration = {
-        ConnectionArn    = aws_codestarconnections_connection.github.arn
-        FullRepositoryId = "Cloudlightcorp/GIT-OnlineMobileStore-build-ci_cd"
-        BranchName       = "prod"
+        ConnectionArn        = aws_codestarconnections_connection.github.arn
+        FullRepositoryId     = "Cloudlightcorp/GIT-OnlineMobileStore-build-ci_cd"
+        BranchName           = "prod"
+        DetectChanges        = "true"
+        OutputArtifactFormat = "CODE_ZIP"
       }
     }
   }
