@@ -5,7 +5,7 @@
 terraform {
   backend "s3" {
     bucket = "terraform-codepipeline-shared-bucket"
-    key    = "terraform/state.tfstate"
+    key    = "GIT-OnlineMobileStore/terraform/state.tfstate"
     region = "us-west-2"
   }
 
