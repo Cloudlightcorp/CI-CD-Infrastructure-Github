@@ -1,7 +1,8 @@
 ############################################################
-# CODEBUILD PROJECT (DEV ONLY)
+# CODEBUILD PROJECT
 # Builds Docker image and pushes to ECR
 ############################################################
+
 resource "aws_codebuild_project" "dev_build" {
   name         = "GIT-OnlineMobileStore-build-ci_cd"
   service_role = aws_iam_role.codebuild_role.arn
@@ -15,6 +16,16 @@ resource "aws_codebuild_project" "dev_build" {
     image           = "aws/codebuild/standard:5.0"
     type            = "LINUX_CONTAINER"
     privileged_mode = true
+
+    environment_variable {
+      name  = "AWS_DEFAULT_REGION"
+      value = var.region
+    }
+
+    environment_variable {
+      name  = "ECR_REPOSITORY_URI"
+      value = aws_ecr_repository.app.repository_url
+    }
   }
 
   source {
