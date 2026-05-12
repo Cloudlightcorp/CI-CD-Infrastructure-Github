@@ -35,11 +35,11 @@ resource "aws_ecs_cluster" "main" {
 }
 
 ############################################################
-# ECS TASK DEFINITION
+# DEV TASK DEFINITION
 ############################################################
 
-resource "aws_ecs_task_definition" "app" {
-  family                   = "git-onlinemobilestore-task"
+resource "aws_ecs_task_definition" "dev_app" {
+  family                   = "git-onlinemobilestore-dev-task"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = "256"
@@ -65,7 +65,83 @@ resource "aws_ecs_task_definition" "app" {
         options = {
           awslogs-group         = "/ecs/git-onlinemobilestore"
           awslogs-region        = "us-west-2"
-          awslogs-stream-prefix = "ecs"
+          awslogs-stream-prefix = "dev"
+        }
+      }
+    }
+  ])
+}
+
+############################################################
+# TEST TASK DEFINITION
+############################################################
+
+resource "aws_ecs_task_definition" "test_app" {
+  family                   = "git-onlinemobilestore-test-task"
+  requires_compatibilities = ["FARGATE"]
+  network_mode             = "awsvpc"
+  cpu                      = "256"
+  memory                   = "512"
+
+  execution_role_arn = aws_iam_role.ecs_execution_role.arn
+
+  container_definitions = jsonencode([
+    {
+      name      = "app"
+      image     = "${aws_ecr_repository.app.repository_url}:latest"
+      essential = true
+
+      portMappings = [
+        {
+          containerPort = var.container_port
+          hostPort      = var.container_port
+        }
+      ]
+
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = "/ecs/git-onlinemobilestore"
+          awslogs-region        = "us-west-2"
+          awslogs-stream-prefix = "test"
+        }
+      }
+    }
+  ])
+}
+
+############################################################
+# PROD TASK DEFINITION
+############################################################
+
+resource "aws_ecs_task_definition" "prod_app" {
+  family                   = "git-onlinemobilestore-prod-task"
+  requires_compatibilities = ["FARGATE"]
+  network_mode             = "awsvpc"
+  cpu                      = "256"
+  memory                   = "512"
+
+  execution_role_arn = aws_iam_role.ecs_execution_role.arn
+
+  container_definitions = jsonencode([
+    {
+      name      = "app"
+      image     = "${aws_ecr_repository.app.repository_url}:latest"
+      essential = true
+
+      portMappings = [
+        {
+          containerPort = var.container_port
+          hostPort      = var.container_port
+        }
+      ]
+
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = "/ecs/git-onlinemobilestore"
+          awslogs-region        = "us-west-2"
+          awslogs-stream-prefix = "prod"
         }
       }
     }
@@ -79,7 +155,7 @@ resource "aws_ecs_task_definition" "app" {
 resource "aws_ecs_service" "dev" {
   name            = "git-onlinemobilestore-dev-service"
   cluster         = aws_ecs_cluster.main.id
-  task_definition = aws_ecs_task_definition.app.arn
+  task_definition = aws_ecs_task_definition.dev_app.arn
   launch_type     = "FARGATE"
   desired_count   = var.desired_count
 
@@ -89,7 +165,7 @@ resource "aws_ecs_service" "dev" {
     assign_public_ip = true
   }
 
-  depends_on = [aws_ecs_task_definition.app]
+  depends_on = [aws_ecs_task_definition.dev_app]
 }
 
 ############################################################
@@ -99,7 +175,7 @@ resource "aws_ecs_service" "dev" {
 resource "aws_ecs_service" "test" {
   name            = "git-onlinemobilestore-test-service"
   cluster         = aws_ecs_cluster.main.id
-  task_definition = aws_ecs_task_definition.app.arn
+  task_definition = aws_ecs_task_definition.test_app.arn
   launch_type     = "FARGATE"
   desired_count   = var.desired_count
 
@@ -109,7 +185,7 @@ resource "aws_ecs_service" "test" {
     assign_public_ip = true
   }
 
-  depends_on = [aws_ecs_task_definition.app]
+  depends_on = [aws_ecs_task_definition.test_app]
 }
 
 ############################################################
@@ -119,7 +195,7 @@ resource "aws_ecs_service" "test" {
 resource "aws_ecs_service" "prod" {
   name            = "git-onlinemobilestore-prod-service"
   cluster         = aws_ecs_cluster.main.id
-  task_definition = aws_ecs_task_definition.app.arn
+  task_definition = aws_ecs_task_definition.prod_app.arn
   launch_type     = "FARGATE"
   desired_count   = var.desired_count
 
@@ -129,5 +205,5 @@ resource "aws_ecs_service" "prod" {
     assign_public_ip = true
   }
 
-  depends_on = [aws_ecs_task_definition.app]
+  depends_on = [aws_ecs_task_definition.prod_app]
 }
