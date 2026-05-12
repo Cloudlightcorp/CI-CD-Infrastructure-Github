@@ -3,7 +3,7 @@
 ############################################################
 
 resource "aws_codestarconnections_connection" "github" {
-  name          = "github-onlinemobilestore-connection"
+  name          = "github-onlinemobilestore"
   provider_type = "GitHub"
 }
 
