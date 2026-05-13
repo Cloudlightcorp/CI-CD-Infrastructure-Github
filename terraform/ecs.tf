@@ -158,7 +158,7 @@ resource "aws_ecs_service" "dev" {
   task_definition = aws_ecs_task_definition.dev_app.arn
   launch_type     = "FARGATE"
 
-  desired_count = 0
+  desired_count = 1
 
   network_configuration {
     subnets          = data.aws_subnets.default.ids
@@ -179,7 +179,7 @@ resource "aws_ecs_service" "test" {
   task_definition = aws_ecs_task_definition.test_app.arn
   launch_type     = "FARGATE"
 
-  desired_count = 0
+  desired_count = 1
 
   network_configuration {
     subnets          = data.aws_subnets.default.ids
@@ -200,7 +200,7 @@ resource "aws_ecs_service" "prod" {
   task_definition = aws_ecs_task_definition.prod_app.arn
   launch_type     = "FARGATE"
 
-  desired_count = 0
+  desired_count = 1
 
   network_configuration {
     subnets          = data.aws_subnets.default.ids
